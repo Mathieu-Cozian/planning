@@ -1,0 +1,7 @@
+<h1>Test</h1>
+<div class="container mt-5 text-center">
+    <%= week_calendar(events: @timeslots) do |date|%>
+    <div class=day>
+    <%=  date.day%></div>
+    <%end  %>
+</div>
