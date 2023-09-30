@@ -99,6 +99,7 @@ GEM
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     date (3.3.3)
+    dead_end (4.0.0)
     debug (1.8.0)
       irb (>= 1.5.0)
       reline (>= 0.3.1)
@@ -223,6 +224,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    simple_calendar (3.0.2)
+      rails (>= 6.1)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -266,6 +269,7 @@ DEPENDENCIES
   bootsnap
   bootstrap (~> 5.2)
   capybara
+  dead_end
   debug
   devise
   dotenv-rails
@@ -278,6 +282,7 @@ DEPENDENCIES
   redis (~> 4.0)
   sassc-rails
   selenium-webdriver
+  simple_calendar
   simple_form!
   sprockets-rails
   stimulus-rails

@@ -1,0 +1,29 @@
+<div class="container">
+  <%= form_for(@timeslot) do |f| %>
+
+  <div class=" form_field">
+    <%= f.label :task %>
+    <%= f.text_field :task %>
+  </div>
+
+  <div class=" form_field">
+    <%= f.label :start_date %>
+    <%= f.datetime_field :start_date %>
+  </div>
+
+  <div class="form_field">
+    <%= f.label :end_date %>
+    <%= f.datetime_field :end_date %>
+  </div>
+
+  <div class="form_field">
+    <%= f.label :number_employee %>
+    <%= f.number_field :number_employee, min: 1 %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+</div>

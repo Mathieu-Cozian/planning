@@ -77,3 +77,7 @@ group :test do
   gem "selenium-webdriver"
 
 end
+
+gem "dead_end"
+
+gem "simple_calendar"

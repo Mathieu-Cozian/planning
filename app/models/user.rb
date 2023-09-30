@@ -6,4 +6,5 @@ class User < ApplicationRecord
 
   has_many :bookings
   has_many :timeslots
+  validates :department, presence: true, numericality: { only_integer: true, in: 1..14 }
 end
