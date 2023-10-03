@@ -4,6 +4,7 @@ class TimeslotsController < ApplicationController
       start_time: Time.now.beginning_of_week..Time.now.end_of_week,
       end_time: Time.now.beginning_of_week..Time.now.end_of_week
     )
+    @bookings = Booking.all
   end
 
   def new
