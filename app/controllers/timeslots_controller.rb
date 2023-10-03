@@ -1,10 +1,11 @@
 class TimeslotsController < ApplicationController
   def index
     @timeslots = Timeslot.where(
-      start_date: Time.now.beginning_of_week..Time.now.end_of_week,
-      end_date: Time.now.beginning_of_week..Time.now.end_of_week
+      start_time: Time.now.beginning_of_week..Time.now.end_of_week,
+      end_time: Time.now.beginning_of_week..Time.now.end_of_week
     )
   end
+
   def new
     @timeslot = Timeslot.new
   end
@@ -18,9 +19,22 @@ class TimeslotsController < ApplicationController
     end
   end
 
+  def edit
+    @timeslot = Timeslot.find(params[:id])
+  end
+
+  def update
+    @timeslot = Timeslot.find(params[:id])
+    if @timeslot.update(timeslot_params)
+      redirect_to timeslots_path
+    else
+      render :edit
+    end
+
+  end
   private
 
   def timeslot_params
-    params.require(:timeslot).permit(:start_date, :end_date, :task, :number_employee)
+    params.require(:timeslot).permit(:start_time, :end_time, :task, :number_employee)
   end
 end

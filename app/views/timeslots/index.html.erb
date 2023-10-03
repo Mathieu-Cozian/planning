@@ -1,7 +1,29 @@
 <h1>Test</h1>
 <div class="container mt-5 text-center">
+
+    <%= link_to "nouveau", new_timeslot_path if current_user.manager? %>
     <%= week_calendar(events: @timeslots) do |date|%>
+      <%= date.month %>
     <div class=day>
-    <%=  date.day%></div>
+      <%=  date.day %>
+      <% @timeslots.each do |timeslot| %>
+        <% if timeslot.start_time >= date.beginning_of_day && timeslot.start_time < date.end_of_day%>
+          <div class >
+            <div class= "mt-5 card timeslot" >
+                <p id="timeslot-title"><%=timeslot.task %></p>
+                  <div class="timeslot-time">
+                    <p id ="timeslot-start-time"><%= timeslot.start_time.strftime("%H:%M  -->") %></p>
+                    <p id ="timeslot-end-time"><%= timeslot.end_time.strftime(" %H:%M") %></p>
+                  </div>
+                <p id ="timeslot-number-employee"> <%= timeslot.number_employee %> <%= timeslot.number_employee > 1 ? " Collaborateurs" : "Collaborateur" %></p>
+
+                <%= button_to "Prendre créneau", create_booking_path if current_user.manager? == false %>
+                <%= link_to "modifier", edit_timeslot_path(timeslot) if current_user.manager?%>
+            </div>
+          <% end  %>
+        </div>
+      <% end  %>
+      </div>
+
     <%end  %>
 </div>

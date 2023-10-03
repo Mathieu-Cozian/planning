@@ -1,0 +1,26 @@
+<%= form_for(@timeslot) do |f| %>
+
+  <div class=" form_field">
+    <%= f.label :task %>
+    <%= f.text_field :task %>
+  </div>
+
+  <div class=" form_field">
+    <%= f.label :start_time %>
+    <%= f.datetime_field :start_time %>
+  </div>
+
+  <div class="form_field">
+    <%= f.label :end_time %>
+    <%= f.datetime_field :end_time %>
+  </div>
+
+  <div class="form_field">
+    <%= f.label :number_employee %>
+    <%= f.number_field :number_employee, min: 1 %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
