@@ -5,6 +5,10 @@ class ExchangesController < ApplicationController
 
   def create
     @exchange = Exchange.new(exchange_params)
+    @exchange.user_1_id = current_user.id
+    @exchange.status = "pending"
+    @exchange.booking_1_id = params[:booking_id]
+    @exchange.user_2_id = params[:user_2_id]
     if @exchange.save
       redirect_to timeslots_path
     else

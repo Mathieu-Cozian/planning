@@ -1,4 +1,4 @@
 class Exchange < ApplicationRecord
-  has_many :user_id
-  has_many :booking_id
+  belongs_to :user_id
+  belongs_to :booking_id
 end
