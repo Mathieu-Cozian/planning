@@ -8,3 +8,7 @@
 Booking.delete_all
 Timeslot.delete_all
 User.delete_all
+
+User.create(email: "employé@mail.com", password: "123456", name: "employé 1", department: 1, manager: false)
+User.create(email: "manager@mail.com", password: "123456", name: "manager", department: 1, manager: true)
+User.create(email: "employé2@mail.com", password: "123456", name: "employé2", department: 1, manager: false)
