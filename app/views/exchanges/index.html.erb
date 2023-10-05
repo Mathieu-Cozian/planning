@@ -1,0 +1,24 @@
+<div class="container mt-5">
+<h1>Mes échanges d'horaire</h1>
+<h3>En attente</h3>
+
+<div class="card">
+<% if @echanges_demands.present? %>
+    <% @echanges_demands.each do |exchange|%>
+        <% if exchange.status == "En attente" %>
+            <div class="card-body">
+                <p>Vous avez demandé à échanger votre horaire avec <%= exchange.user_2_id.name %></p>
+            <%= link_to "Annuler", exchange_path(exchange), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+            </div>
+          <%= raise %>
+          <% elsif @echanges_demands.where(status: "En attente", user_1_id: current_user.id).map.empty? %>
+            <div class="card-body">
+            <p>Vous n'avez aucune demande d'échange en attente</p>
+            </div>
+        <% end %>
+    <% end %>
+
+</div>
+<%end %>
+
+</div>

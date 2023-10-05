@@ -1,69 +1,72 @@
 <h1>Test</h1>
+
+<!-- Main container for the calendar -->
 <div class="container mt-5 text-center">
 
+    <!-- Display a link to create a new timeslot if the current user is a manager -->
     <%= link_to "nouveau", new_timeslot_path if current_user.manager? %>
+
+    <!-- Display a week calendar with timeslots as events -->
     <%= week_calendar(events: @timeslots) do |date|%>
       <%= date.month %>
-    <div class=day>
-      <%=  date.day %>
+      <div class=day>
+        <%=  date.day %>
 
+        <% @timeslots.each do |timeslot| %>
+          <% bookings = @bookings.where(timeslot_id: timeslot) %>
 
-      <% @timeslots.each do |timeslot| %>
-              -
-        <% bookings = @bookings.where(timeslot_id: timeslot) %>   <%# definition of bookings  %>
-
-        <% if timeslot.start_time >= date.beginning_of_day && timeslot.start_time < date.end_of_day%>
-        <div>
-
-                    <%# EVENEMENT %>
-            <div class= "mt-5 card timeslot" >
-                <p id="timeslot-title"><%=timeslot.task %></p>
+          <% if timeslot.start_time >= date.beginning_of_day && timeslot.start_time < date.end_of_day%>
+            <div>
+              <!-- détails timeslot -->
+              <div class= "mt-5 card timeslot" >
+                  <p id="timeslot-title"><%=timeslot.task %></p>
                   <div class="timeslot-time">
-                    <p id ="timeslot-start-time"><%= timeslot.start_time.strftime("%H:%M  -->") %></p>
-                    <p id ="timeslot-end-time"><%= timeslot.end_time.strftime(" %H:%M") %></p>
+                      <p id ="timeslot-start-time"><%= timeslot.start_time.strftime("%H:%M  -->") %></p>
+                      <p id ="timeslot-end-time"><%= timeslot.end_time.strftime(" %H:%M") %></p>
                   </div>
+                  <!--number of employees -->
+                  <p id ="timeslot-number-employee"> <%= timeslot.number_employee %> <%= timeslot.number_employee > 1 ? " Collaborateurs" : "Collaborateur" %></p>
 
-                <p id ="timeslot-number-employee"> <%= timeslot.number_employee %> <%= timeslot.number_employee > 1 ? " Collaborateurs" : "Collaborateur" %></p>
+                  <u><li>Inscrits :</li>
 
-                <%# EMPLOYÉS QUI ONT CHOISI CE CRÉNEAU %>
+                  <% if bookings.any? %>
+                    <p> current user id : <%= current_user.id %></p>
 
-                <u><li>Inscrits :</li>
+                    <% bookings.each do |booking| %>
+                      <div class="d-flex">
+                          <li><%= booking.user.name %></li>
+                          <p>booking_user_id : <%= booking.user_id %></p>
 
-                <% if bookings.any? %>
-                <p> current user id : <%= current_user.id %>
-                </p>
-                  <% bookings.each do |booking| %>
+                          <% unless bookings.map(&:user_id).include?(current_user.id) && bookings.size >= timeslot.number_employee %>
+                              <% asked_exchange = Exchange.where(user_1_id: current_user && booking_2_id: booking && user_2_id: booking.user) %>
 
-                  <div class="d-flex">
-                    <li><%= booking.user.name %></li>
-                   <p>booking_user_id : <%= booking.user_id %></p>
+                              <% if asked_exchange.any? %>
+                                  <li class="btn btn-primary">Demande <%= asked_exchange.status  %></li>
+                              <% else %>
+                              <li><%= button_to "Request exchange", exchanges_path(user_1_id: current_user.id, user_2_id: booking.user_id, booking_2_id: booking.id, status: "En attente"), method: :post, remote: true, class: 'btn btn-warning' %></li>
+                          <% end %>
+                              <% end %>
 
-                    <% unless bookings.map(&:user_id).include?(current_user.id) && bookings.size >= timeslot.number_employee %>
-                        <li><%= button_to "Request exchange", exchanges_path(user_1_id: current_user.id, user_2_id: booking.user_id, booking_2_id: booking.id), method: :post, remote: true, class: 'btn btn-warning' %></li>
+                      </div>
                     <% end %>
-                  </div>
+                  <% else %>
+                      <li>Aucun</li>
+                  </ul>
                   <% end %>
-                    <% else %>
-                    <li>Aucun</li>
-                </ul>
-                <% end %>
 
-                          <%# BOUTONS MODIFIER / CHOISIR CRÉNEAU / ECHANGER  %>
-
-                <% if current_user.manager? && bookings.size < timeslot.number_employee %>
-                    <p>complet</p>
+                  <!-- Display buttons for modifying, choosing a slot, or exchanging -->
+                  <% if current_user.manager? && bookings.size < timeslot.number_employee %>
+                      <p>complet</p>
                   <% elsif bookings.size < timeslot.number_employee && current_user.manager? == false%>
-                    <%= button_to 'Book this slot', bookings_path(timeslot_id: timeslot.id), method: :post, remote: true, class: 'btn btn-primary' %>
-                <% end %>
+                      <%= button_to 'Book this slot', bookings_path(timeslot_id: timeslot.id), method: :post, remote: true, class: 'btn btn-primary' %>
+                  <% end %>
 
-                <%= link_to "modifier", edit_timeslot_path(timeslot) if current_user.manager?%>
-            </div>
-
-
-          <% end  %>
-        </div>
-      <% end  %>
+                  <!-- Display edit link if the current user is a manager -->
+                  <%= link_to "modifier", edit_timeslot_path(timeslot) if current_user.manager?%>
+              </div>
+            <% end  %>
+          </div>
+        <% end  %>
       </div>
-
     <%end  %>
 </div>

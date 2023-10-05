@@ -12,6 +12,7 @@ class BookingsController < ApplicationController
     @booking = Booking.new(:user_id => current_user.id, :timeslot_id => params[:timeslot_id])
     if @bookings.where(timeslot_id: params[:timeslot_id]).count < @timeslot.number_employee
       @booking.save
+      flash[:notice] = "Votre créneau a bien été réservé"
       redirect_to timeslots_path
     else
       flash[:alert] = "Désolé, il a deja assez de participants pour ce créneau"
