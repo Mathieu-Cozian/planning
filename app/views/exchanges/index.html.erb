@@ -2,23 +2,52 @@
 <h1>Mes échanges d'horaire</h1>
 <h3>En attente</h3>
 
+<%# Si il y a des demandes (!= nil) %>
+
+<%# Demandes reçues en attente %>
+
+            <%# Si il en a avec le status attente & user_1: current_user %>
 <div class="card">
-<% if @echanges_demands.present? %>
-    <% @echanges_demands.each do |exchange|%>
-        <% if exchange.status == "En attente" %>
-            <div class="card-body">
-                <p>Vous avez demandé à échanger votre horaire avec <%= exchange.user_2_id.name %></p>
-            <%= link_to "Annuler", exchange_path(exchange), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
-            </div>
-          <%= raise %>
-          <% elsif @echanges_demands.where(status: "En attente", user_1_id: current_user.id).map.empty? %>
-            <div class="card-body">
-            <p>Vous n'avez aucune demande d'échange en attente</p>
-            </div>
-        <% end %>
+
+    <% if @echanges_demands.present? %>
+      <% @echanges_demands.each do |exchange|%>
+          <% if exchange.status == "En attente" %>
+              <div class="card-body">
+                  <p><%= User.find(exchange.user_1_id).name %> souhaite échanger son horaire avec vous</p>
+                  <%= link_to "Accepter", exchange_path(exchange, status: "Accepté"), method: :patch, class: "btn btn-success" %>
+                  <%= link_to "Refuser", exchange_path(exchange, status: "Refusé"), method: :patch, class: "btn btn-danger" %>
+              </div>
+          <% end %>
+      <% end %>
     <% end %>
-
 </div>
-<%end %>
 
+<%# Demandes crées en attente  %>
+<% if @exchange_request.present?  %>
+  <% @exchange_request.each do |exchange| %>
+    <% if exchange.status == "En attente" %>
+      <div class="card-body">
+        <p>Vous avez demandé à échanger votre horaire avec <%= eUser.find(exchange.user_2_id).name %></p>
+        <%= link_to "Annuler", exchange_path(exchange), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+      </div>
+    <%end %>
+  <%end %>
+<% end %>
+
+<%# Demandes passées %>
+
+<% if @exchanges.present? %>
+  <% @exchanges.order(:created_at).each do |exchange| %>
+     <% if exchange.status == "En attente" || exchange.status == "Accepté" || exchange.status == "Refusé" %>
+      <div class="card-body">
+        <% if exchange.user_1 == current_user %>
+          <p>Votre demande d'échange avec <%= User.find(exchange.user_2_id).name %> a été <%= exchange.status%>e</p>
+        <% elsif exchange.user_2 == current_user %>
+          <p>Vous avez <%= exchange.status %> la demande d'échange de <%= User.find(exchange.user_1_id).name%></p>
+        <% end %>
+      </div>
+     <%end %>
+
+  <% end %>
+<% end %>
 </div>

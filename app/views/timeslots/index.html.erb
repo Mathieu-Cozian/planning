@@ -1,3 +1,4 @@
+<!-- This is an HTML comment -->
 <h1>Test</h1>
 
 <!-- Main container for the calendar -->
@@ -8,65 +9,74 @@
 
     <!-- Display a week calendar with timeslots as events -->
     <%= week_calendar(events: @timeslots) do |date|%>
-      <%= date.month %>
-      <div class=day>
-        <%=  date.day %>
+        <!-- Display the month -->
+        <%= date.month %>
+        <div class="day">
+            <!-- Display the day of the month -->
+            <%= date.day %>
 
-        <% @timeslots.each do |timeslot| %>
-          <% bookings = @bookings.where(timeslot_id: timeslot) %>
+            <!-- Iterate over timeslots and associated bookings -->
+            <% @timeslots.each do |timeslot| %>
+                <% bookings = @bookings.where(timeslot_id: timeslot.id) %>
 
-          <% if timeslot.start_time >= date.beginning_of_day && timeslot.start_time < date.end_of_day%>
-            <div>
-              <!-- détails timeslot -->
-              <div class= "mt-5 card timeslot" >
-                  <p id="timeslot-title"><%=timeslot.task %></p>
-                  <div class="timeslot-time">
-                      <p id ="timeslot-start-time"><%= timeslot.start_time.strftime("%H:%M  -->") %></p>
-                      <p id ="timeslot-end-time"><%= timeslot.end_time.strftime(" %H:%M") %></p>
-                  </div>
-                  <!--number of employees -->
-                  <p id ="timeslot-number-employee"> <%= timeslot.number_employee %> <%= timeslot.number_employee > 1 ? " Collaborateurs" : "Collaborateur" %></p>
+                <!-- Check if the timeslot falls within the current day -->
+                <% if timeslot.start_time >= date.beginning_of_day && timeslot.start_time < date.end_of_day %>
+                    <div class="mt-5 card timeslot">
+                        <!-- Display the task associated with the timeslot -->
+                        <p id="timeslot-title"><%= timeslot.task %></p>
+                        <div class="timeslot-time">
+                            <!-- Display start and end times for the timeslot -->
+                            <p id="timeslot-start-time"><%= timeslot.start_time.strftime("%H:%M -->") %></p>
+                            <p id="timeslot-end-time"><%= timeslot.end_time.strftime(" %H:%M") %></p>
+                        </div>
+                        <!-- Display the number of employees required for the timeslot -->
+                        <p id="timeslot-number-employee"> <%= timeslot.number_employee %> <%= timeslot.number_employee > 1 ? " Collaborateurs" : " Collaborateur" %></p>
 
-                  <u><li>Inscrits :</li>
+                        <!-- Display a list of booked users -->
+                        <ul><li>Inscrits :</li>
+                        <% if bookings.any? %>
+                            <!-- Display the current user's ID -->
+                            <p> current user id : <%= current_user.id %></p>
 
-                  <% if bookings.any? %>
-                    <p> current user id : <%= current_user.id %></p>
+                            <!-- Iterate over bookings for this timeslot -->
+                            <% bookings.each do |booking| %>
+                                <div class="d-flex">
+                                    <!-- Display the name of the user who booked -->
+                                    <li><%= booking.user.name %></li>
+                                    <!-- Display the ID of the booking user -->
+                                    <p>booking_user_id : <%= booking.user_id %></p>
 
-                    <% bookings.each do |booking| %>
-                      <div class="d-flex">
-                          <li><%= booking.user.name %></li>
-                          <p>booking_user_id : <%= booking.user_id %></p>
+                                    <!-- Check conditions for requesting an exchange -->
+                                    <% unless bookings.map(&:user_id).include?(current_user.id) && bookings.size >= timeslot.number_employee %>
+                                        <!-- Find any pending exchange requests between users -->
+                                        <% asked_exchange = Exchange.where(user_1_id: current_user.id, booking_2_id: booking.id, user_2_id: booking.user.id) %>
+                                        <!-- Display a button for a pending exchange or a request button -->
+                                        <% if asked_exchange.any? %>
+                                            <li class="btn btn-primary">Demande en attente</li>
+                                        <% else %>
 
-                          <% unless bookings.map(&:user_id).include?(current_user.id) && bookings.size >= timeslot.number_employee %>
-                              <% asked_exchange = Exchange.where(user_1_id: current_user && booking_2_id: booking && user_2_id: booking.user) %>
+                                            <!-- Display a button to request an exchange -->
+                                            <li><%= button_to "Request exchange", exchanges_path(user_1_id: current_user.id, user_2_id: booking.user_id, booking_2_id: booking.id, status: "En attente"), method: :post, remote: true, class: 'btn btn-warning' %></li>
+                                        <% end %>
+                                    <% end %>
+                                </div>
+                            <% end %>
 
-                              <% if asked_exchange.any? %>
-                                  <li class="btn btn-primary">Demande <%= asked_exchange.status  %></li>
-                              <% else %>
-                              <li><%= button_to "Request exchange", exchanges_path(user_1_id: current_user.id, user_2_id: booking.user_id, booking_2_id: booking.id, status: "En attente"), method: :post, remote: true, class: 'btn btn-warning' %></li>
-                          <% end %>
-                              <% end %>
+                            <!-- Check conditions for displaying "complet" (full) if the timeslot is full -->
+                            <% if current_user.manager? && bookings.size < timeslot.number_employee %>
+                                <p>complet</p>
+                            <% elsif bookings.size < timeslot.number_employee && !current_user.manager? %>
+                                <!-- Display a button to book this slot for non-managers if there are available slots -->
+                                <%= button_to 'Book this slot', bookings_path(timeslot_id: timeslot.id), method: :post, remote: true, class: 'btn btn-primary' %>
+                            <% end %>
+                        <% end %>
+                        </ul>
 
-                      </div>
-                    <% end %>
-                  <% else %>
-                      <li>Aucun</li>
-                  </ul>
-                  <% end %>
-
-                  <!-- Display buttons for modifying, choosing a slot, or exchanging -->
-                  <% if current_user.manager? && bookings.size < timeslot.number_employee %>
-                      <p>complet</p>
-                  <% elsif bookings.size < timeslot.number_employee && current_user.manager? == false%>
-                      <%= button_to 'Book this slot', bookings_path(timeslot_id: timeslot.id), method: :post, remote: true, class: 'btn btn-primary' %>
-                  <% end %>
-
-                  <!-- Display edit link if the current user is a manager -->
-                  <%= link_to "modifier", edit_timeslot_path(timeslot) if current_user.manager?%>
-              </div>
+                        <!-- Display edit link if the current user is a manager -->
+                        <%= link_to "modifier", edit_timeslot_path(timeslot) if current_user.manager? %>
+                    </div>
+                <% end  %>
             <% end  %>
-          </div>
-        <% end  %>
-      </div>
+        </div>
     <%end  %>
 </div>

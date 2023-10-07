@@ -1,19 +1,19 @@
 class ExchangesController < ApplicationController
   def index
+    @exchanges = Exchange.all
     @exchanges_demands = Exchange.where(user_1_id: current_user.id)
     @exchanges_resquests = Exchange.where(user_2_id: current_user.id)
+
   end
 
   def create
     @exchange = Exchange.new(exchange_params)
     if @exchange.save
       flash[:notice] = "Demande d'échange envoyée"
-      redirect_to timeslots_path
     else
-      puts @exchange.errors.full_messages
       flash[:alert] = @exchange.errors.full_messages.join(", ")
-      redirect_to timeslots_path
     end
+    redirect_to timeslots_path
   end
 
   def destroy
