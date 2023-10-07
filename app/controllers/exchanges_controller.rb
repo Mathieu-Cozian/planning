@@ -17,9 +17,15 @@ class ExchangesController < ApplicationController
   end
 
   def update
+    Rails.logger.debug "Parameters: #{params.inspect}"
+    raise
     @exchange = Exchange.find(params[:id])
-    @exchange.update(status: params[:status])
-    redirect_to exchanges_path
+    if @exchange.update(status: params[:status])
+      flash[:notice] = "Echange accepté"
+    else
+      flash[:alert] = @exchange.errors.full_messages.join(", ")
+      redirect_to exchanges_path
+    end
   end
 
   def destroy
