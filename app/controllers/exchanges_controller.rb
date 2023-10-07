@@ -16,6 +16,12 @@ class ExchangesController < ApplicationController
     redirect_to timeslots_path
   end
 
+  def update
+    @exchange = Exchange.find(params[:id])
+    @exchange.update(status: params[:status])
+    redirect_to exchanges_path
+  end
+
   def destroy
     @exchange = Exchange.find(params[:id])
     @exchange.destroy

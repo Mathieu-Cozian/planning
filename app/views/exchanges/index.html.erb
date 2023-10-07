@@ -27,7 +27,7 @@
   <% @exchange_request.each do |exchange| %>
     <% if exchange.status == "En attente" %>
       <div class="card-body">
-        <p>Vous avez demandé à échanger votre horaire avec <%= eUser.find(exchange.user_2_id).name %></p>
+        <p>Vous avez demandé à échanger votre horaire avec <%= User.find(exchange.user_2_id).name %></p>
         <%= link_to "Annuler", exchange_path(exchange), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
       </div>
     <%end %>
