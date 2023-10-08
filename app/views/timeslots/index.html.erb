@@ -32,9 +32,9 @@
                                   <li><%= booking.user.name %></li>
                                   <%# Boutons --> Conditions  %>
                                   <% if bookings.size >= timeslot.number_employee && bookings.map(&:user_id).exclude?(current_user.id) %>
-                                      <% if Exchange.where(booking_2_id: booking, user_2_id: booking.user, user_1_id: current_user).size >= 1%>
+                                      <% if Exchange.where(booking_2_id: booking, user_2_id: booking.user, user_1_id: current_user, status: "En attente").size >= 1%>
                                           <li class="btn btn-primary">Demande en attente</li>
-                                      <% elsif Exchange.where(booking_2_id: booking, user_2_id: booking.user, user_1_id: current_user).size <= 1 %>
+                                      <% elsif Exchange.where(booking_2_id: booking, user_2_id: booking.user, user_1_id: current_user, status: "En attente").size <= 1 %>
                                           <li><%= button_to "Request exchange", exchanges_path(user_1_id: current_user.id, user_2_id: booking.user_id, booking_2_id: booking.id, status: "En attente"), method: :post, remote: true, class: 'btn btn-warning' %></li>
                                       <% end %>
                               </div>

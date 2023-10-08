@@ -1,8 +1,8 @@
 class ExchangesController < ApplicationController
   def index
     @exchanges = Exchange.all
-    @exchanges_demands = Exchange.where(user_1_id: current_user.id)
-    @exchanges_resquests = Exchange.where(user_2_id: current_user.id)
+    @exchanges_demands = Exchange.where(user_2_id: current_user.id)
+    @exchanges_resquests = Exchange.where(user_1_id: current_user.id)
 
   end
 
@@ -17,11 +17,16 @@ class ExchangesController < ApplicationController
   end
 
   def update
-    Rails.logger.debug "Parameters: #{params.inspect}"
-    raise
     @exchange = Exchange.find(params[:id])
+    @status = params[:status]
+    booking = Booking.find(@exchange.booking_2_id)
     if @exchange.update(status: params[:status])
-      flash[:notice] = "Echange accepté"
+      if @status == "Accepté"
+        flash[:notice] = "Échange accepté"
+      booking.update(user_id: @exchange.user_1_id)
+      elsif @status == "Refusé"
+        flash[:notice] = "Échange refusé"
+      end
     else
       flash[:alert] = @exchange.errors.full_messages.join(", ")
       redirect_to exchanges_path

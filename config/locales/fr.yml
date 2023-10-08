@@ -1,0 +1,24 @@
+fr:
+  date:
+    abbr_day_names:
+    - dim
+    - lun
+    - mar
+    - mer
+    - jeu
+    - ven
+    - sam
+
+  month_names:
+      - 'Janvier'
+      - 'Février'
+      - 'Mars'
+      - 'Avril'
+      - 'Mai'
+      - 'Juin'
+      - 'Juillet'
+      - 'Août'
+      - 'Septembre'
+      - 'Octobre'
+      - 'Novembre'
+      - 'Décembre'
