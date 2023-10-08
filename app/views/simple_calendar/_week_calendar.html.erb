@@ -1,7 +1,8 @@
 <div class="simple-calendar">
   <div class="calendar-heading">
     <span class="calendar-title">
-      <%= l(calendar.start_date, format: "%B") %>
+    <% month = ["  ", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"] %>
+      <%= month[calendar.start_date.month]%>
       <%= t('simple_calendar.week', default: 'Semaine') %>
       <%= calendar.week_number %>
       <% if calendar.number_of_weeks > 1 %>

@@ -1,13 +1,12 @@
 <div class="container mt-5">
 <h1>Mes échanges d'horaire</h1>
-<h3>En attente</h3>
+<h3>Mes demandes en attente</h3>
 
 <%# Demandes reçues en attente %>
 
             <%# Si il en a avec le status attente & user_2: current_user %>
 <div class="card">
-
-    <% if @exchanges_demands.present? %>
+    <% if @exchanges_demands.where(user_1_id: current_user).present? %>
       <% @exchanges_demands.each do |exchange|%>
           <% if exchange.status == "En attente" %>
               <div class="card-body">
@@ -18,9 +17,12 @@
               </div>
           <% end %>
       <% end %>
+      <% else %>
+        <p>Vous n'avez pas de demande d'échange en attente</p>
     <% end %>
 </div>
 
+<h3> Demandes reçues</h3>
 <%# Demandes crées en attente  %>
 <% if @exchanges_requests.present?  %>
   <% @exchanges_requests.each do |exchange| %>
@@ -31,6 +33,8 @@
       </div>
     <%end %>
   <%end %>
+<% else %>
+  <p>Vous n'avez pas de demande d'échange en attente</p>
 <% end %>
 
 <%# Demandes passées %>
