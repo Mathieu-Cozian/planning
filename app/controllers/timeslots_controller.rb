@@ -24,6 +24,9 @@ class TimeslotsController < ApplicationController
     @timeslot = Timeslot.find(params[:id])
   end
 
+  def duplicate(week)
+    events = Timeslot.where()
+  end
   def update
     @timeslot = Timeslot.find(params[:id])
     if @timeslot.update(timeslot_params)
